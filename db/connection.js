@@ -1,0 +1,22 @@
+const mysql = require('mysql2');
+
+
+let db = mysql.createConnection(
+    {
+        host: 'localhost',
+        // Your MyFSQL username,
+        user: 'root',
+        // Your MySQL password
+        password: 'root',
+        database: 'tracker'
+    },
+    console.log('Connected to the tracker database')
+);
+
+connection.connect(function (err) {
+    if (err) throw err;
+    console.log("connected as id " + connection.threadId + "\n");
+    runSearch();
+});
+
+module.exports = db;
