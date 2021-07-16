@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 
 
-let db = mysql.createConnection(
+let connection = mysql.createConnection(
     {
         host: 'localhost',
         // Your MyFSQL username,
@@ -19,4 +19,4 @@ connection.connect(function (err) {
     runSearch();
 });
 
-module.exports = db;
+module.exports = connection;
