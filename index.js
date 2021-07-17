@@ -1,16 +1,9 @@
 const inquirer = require('inquirer');
-const Database = require('./db/connection')
+// const Database = require('./db/connection')
 const cTable = require('console.table');
 const { query } = require('express');
+const connection = require('./db/connection');
 
-// connecting to database
-const connection = new Database({
-    host: "localhost",
-    PORT: 3001,
-    user: "root",
-    password: "root",
-    database: "tracker_db",
-});
 
 // view all employees
 async function viewAllEmployees() {
@@ -237,40 +230,40 @@ async function uiPrompt() {
     });
 };
 
-// add  new employee infor to db
-async function addEmployee() {
-    const managers = await obtainManagerNames();
-    const roles = await obtainRoles();
-    return inquirer
-        .prompt([
-            {
-                type: "input",
-                name: "first_name",
-                message: "Enter first name of employee:",
-            },
+// // add  new employee infor to db
+// async function addEmployee() {
+//     const managers = await obtainManagerNames();
+//     const roles = await obtainRoles();
+//     return inquirer
+//         .prompt([
+//             {
+//                 type: "input",
+//                 name: "first_name",
+//                 message: "Enter first name of employee:",
+//             },
             
-            {
-                type: "input",
-                name: "last_name",
-                message: "Enter last name of employee:",
-            },
-            {
-                type: "list",
-                name: "Assign employee role:",
-                choices: [
-                    ...roles
-                ],
-            },
-            {
-                type: "list",
-                name: "Assign manger (if applicable)",
-                choices: [
-                    ...managers, "null"
-                ],
-            },
+//             {
+//                 type: "input",
+//                 name: "last_name",
+//                 message: "Enter last name of employee:",
+//             },
+//             {
+//                 type: "list",
+//                 name: "Assign employee role:",
+//                 choices: [
+//                     ...roles
+//                 ],
+//             },
+//             {
+//                 type: "list",
+//                 name: "Assign manger (if applicable)",
+//                 choices: [
+//                     ...managers, "null"
+//                 ],
+//             },
 
-        ])
-}
+//         ])
+// }
 
 
 
