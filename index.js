@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const Database = require('./db/connection')
 const cTable = require('console.table');
+const { query } = require('express');
 
 // connecting to database
 const connection = new Database({
@@ -67,6 +68,154 @@ async function obtainAllDepartments () {
     console.table(rows);
 }
 
+// get roles 
+async function obtainRoles () {
+    const query = `SELECT title FROM role`;
+    const rows = await connection.query(query);
+    let roles = [];
+    console.log(roles)
+    console.log(rows)
+    for(const row of rows) {
+        roles.push(row.role)
+    }
+    return roles;
+};
+
+// view all roles
+async function obtainAllRoles () {
+    const query = `SELECT id AS 'ID', title AS 'Title', salary AS 'SALARY' FROM roles`;
+    const rows = await connection.query(query);
+    console.table(rows);
+};
+
+// get manager names
+// async function obtainManagerNames () {
+//     console query = `SELECT * FROM employees WHERE manager_id IS NULL`;
+//     const rows = await connection.query(query);
+//     console.log(employee)
+//     console.log(employeeNames)
+//     let employeeNames = [];
+//     for(const employee of rows) {
+//         employeeNames.push('${employee.first_name} ${employee.last_name}')
+//     }
+//     return employeeNames;
+// };
+
+// view details for all employees 
+async function viewAllEmployeeDetails () {
+    console.log('\n')
+    const query = `SELECT employees.id AS 'ID',
+    first_name AS 'First Name',
+    last_name AS 'Last Name'
+    role.role AS 'Title',
+    department.name AS 'Department',
+    role.salary AS 'Salary',
+    manager_id AS 'Manager ID'
+    FROM emplooyees, roles, departments
+    WHERE employees.role_id = roles.id
+    AND roles.department_id = department.id
+    ORDER BY employees.id ASC
+    `;
+    const rows = await connection.query(query);
+    console.table(rows)
+};
+
+// view all employees by dept
+async function obtainEmployeesByDepartment () {
+    console.log("\n")
+    const query = `SELECT first_name AS 'First Name', last_name AS 'Last Name', department.name AS 'Department Name' FROM 
+    ((employee INNER JOIN role ON role_id = roles.id)
+    INNER JOIN department ON department_id = departments.id)
+    ORDER BY employees.id ASC`;
+    const rows = await connection.query(query);
+    console.table(rows);
+}
+
+// get role ID
+async function obtainRoleId (roleName) {
+    const query = `SELECT id FROM roles WHERE roles.role = ?`
+    const args = [roleName];
+    const rows = await connection.query(query, args)
+    return rows[0].id
+};
+
+// get department names
+async function obtainDepartmentNames () {
+    const query = `SELECT name FROM department`;
+    const rows = await connection.query(query);
+    let departments = [];
+    console.log(rows)
+    for (const row of rows) {
+        departments.push(row.name)
+    }
+    return departments;
+}
+
+// get employee ID
+async function obtainEmployeeId (employeeName) {
+    if (employeeName === "None") {
+        return null;
+    }
+    const firstName = employeeName.split('')[0];
+    const lastName = employeeName.split('')[1];
+    const query = `SELECT id FROM employees WHERE first_name = ? AND last_name = ?`;
+    const rows = await connection.query(query, [firstName, lastName], (error, results) => {
+        if (error) {
+            console.log(error)
+            throw error
+        } else {
+            return rows[0].id;
+        }
+    })
+};
+
+// get department by ID
+async function obtainDepartmentId (departmentName) {
+    const query = `SELECT * FROM departments WHERE departments.name = ?`;
+    const args = [departmentName];
+    const rows = await
+    connection.query(query, args);
+    return rows[0].id;
+}
+
+// retreive employee roster 
+const employeeRoster = (name) => {
+    console.log(name)
+    let staff = name.split('');
+    return staff;
+}
+
+// add an employee
+async function insertEmployee (employee) {
+    const roleId = await obtainRoleId(employees.role);
+    const managerId = await obtainEmployeeId(employee.manager);
+    const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+            VALUES (?,?,?,?)`;
+    const args = [employees.first_name, employees.last_name, roleId, managerId];
+    const rows = await connection.query(query, args, (error) => {
+        if (error) {
+            console.log(error)
+            throw error;
+        } else {
+            console.log('${employees.first_name} ${employees.last_name} added');
+            return rows;
+        }
+    });
+};
+
+// remove an employee 
+async function slashHire(employeeName) {
+    console.log(employeeName)
+    const firstName = employeeName.employee.split('')[0];
+    const lastName = employeeName.employee.split('')[1];
+    console.log(employeeName)
+    query = `DELETE FROM employees WHERE first_name = ? AND last_name = ?`;
+    await connection.query(query, [firstName, lastName]);
+    console.log('${firsName} ${lastName} successfully removed');
+};
+    
+
+// this function is the list that the user will interact with; uiPrompt  
 inquirer
 .prompt({
     name: "whatToDo",
