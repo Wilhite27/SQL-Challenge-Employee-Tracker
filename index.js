@@ -6,26 +6,26 @@ const { query } = require('express');
 // connecting to database
 const connection = new Database({
     host: "localhost",
-    PORT: 3306,
+    PORT: 3001,
     user: "root",
     password: "root",
     database: "tracker_db",
 });
 
 // view all employees
-async function viewAllEmployees () {
+async function viewAllEmployees() {
     const query = `SELECT* FROM employees`;
     const rows = await connection.query(query);
     console.table(rows)
 };
 
 // add new role
-async function addRole (roleInformation) {
+async function addRole(roleInformation) {
     const departmentId = await obtainDepartmentId(roleInformation.departmentName);
     const salary = roleInformation.salary;
     const role = roleInformation.roleName;
     const query = `INSERT INTO roles (role, salary, department_id) VALUES (?,?,?)`;
-    const args =[role, salary, departmentId];
+    const args = [role, salary, departmentId];
     await connection.query(query, args);
     console.log('New role successfully added')
 };
@@ -42,7 +42,7 @@ async function updateEmployeeRole(info) {
 }
 
 //add department
-async function acquireDepartmentInfo (departmentInfo) {
+async function acquireDepartmentInfo(departmentInfo) {
     const departmentName = departmentInfo.departmentName;
     const query = `INSERT into departments (name) VALUES (?)`;
     const args = [departmentName];
@@ -51,7 +51,7 @@ async function acquireDepartmentInfo (departmentInfo) {
 }
 
 // view all employees 
-async function acquireEmployeeRoster () {
+async function acquireEmployeeRoster() {
     const query = `SELECT * FROM employees`;
     const rows = await connection.query(query);
     let names = [];
@@ -62,47 +62,47 @@ async function acquireEmployeeRoster () {
 };
 
 // view all departments
-async function obtainAllDepartments () {
+async function obtainAllDepartments() {
     const query = `SELECT id AS 'ID', name AS 'Department' FROM departments`;
     const rows = await connection.query(query);
     console.table(rows);
 }
 
 // get roles 
-async function obtainRoles () {
+async function obtainRoles() {
     const query = `SELECT title FROM role`;
     const rows = await connection.query(query);
     let roles = [];
     console.log(roles)
     console.log(rows)
-    for(const row of rows) {
+    for (const row of rows) {
         roles.push(row.role)
     }
     return roles;
 };
 
 // view all roles
-async function obtainAllRoles () {
+async function obtainAllRoles() {
     const query = `SELECT id AS 'ID', title AS 'Title', salary AS 'SALARY' FROM roles`;
     const rows = await connection.query(query);
     console.table(rows);
 };
 
 // get manager names
-// async function obtainManagerNames () {
-//     console query = `SELECT * FROM employees WHERE manager_id IS NULL`;
-//     const rows = await connection.query(query);
-//     console.log(employee)
-//     console.log(employeeNames)
-//     let employeeNames = [];
-//     for(const employee of rows) {
-//         employeeNames.push('${employee.first_name} ${employee.last_name}')
-//     }
-//     return employeeNames;
-// };
+async function obtainManagerNames () {
+    const query = `SELECT * FROM employees WHERE manager_id IS NULL`;
+    const rows = await connection.query(query);
+    console.log(employee)
+    console.log(employeeNames)
+    let employeeNames = [];
+    for(const employee of rows) {
+        employeeNames.push('${employee.first_name} ${employee.last_name}')
+    }
+    return employeeNames;
+};
 
 // view details for all employees 
-async function viewAllEmployeeDetails () {
+async function viewAllEmployeeDetails() {
     console.log('\n')
     const query = `SELECT employees.id AS 'ID',
     first_name AS 'First Name',
@@ -121,7 +121,7 @@ async function viewAllEmployeeDetails () {
 };
 
 // view all employees by dept
-async function obtainEmployeesByDepartment () {
+async function obtainEmployeesByDepartment() {
     console.log("\n")
     const query = `SELECT first_name AS 'First Name', last_name AS 'Last Name', department.name AS 'Department Name' FROM 
     ((employee INNER JOIN role ON role_id = roles.id)
@@ -132,7 +132,7 @@ async function obtainEmployeesByDepartment () {
 }
 
 // get role ID
-async function obtainRoleId (roleName) {
+async function obtainRoleId(roleName) {
     const query = `SELECT id FROM roles WHERE roles.role = ?`
     const args = [roleName];
     const rows = await connection.query(query, args)
@@ -140,7 +140,7 @@ async function obtainRoleId (roleName) {
 };
 
 // get department names
-async function obtainDepartmentNames () {
+async function obtainDepartmentNames() {
     const query = `SELECT name FROM department`;
     const rows = await connection.query(query);
     let departments = [];
@@ -152,7 +152,7 @@ async function obtainDepartmentNames () {
 }
 
 // get employee ID
-async function obtainEmployeeId (employeeName) {
+async function obtainEmployeeId(employeeName) {
     if (employeeName === "None") {
         return null;
     }
@@ -170,11 +170,11 @@ async function obtainEmployeeId (employeeName) {
 };
 
 // get department by ID
-async function obtainDepartmentId (departmentName) {
+async function obtainDepartmentId(departmentName) {
     const query = `SELECT * FROM departments WHERE departments.name = ?`;
     const args = [departmentName];
     const rows = await
-    connection.query(query, args);
+        connection.query(query, args);
     return rows[0].id;
 }
 
@@ -186,7 +186,7 @@ const employeeRoster = (name) => {
 }
 
 // add an employee
-async function insertEmployee (employee) {
+async function insertEmployee(employee) {
     const roleId = await obtainRoleId(employees.role);
     const managerId = await obtainEmployeeId(employee.manager);
     const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -213,34 +213,77 @@ async function slashHire(employeeName) {
     await connection.query(query, [firstName, lastName]);
     console.log('${firsName} ${lastName} successfully removed');
 };
-    
 
-// this function is the list that the user will interact with; uiPrompt  
-inquirer
-.prompt({
-    name: "whatToDo",
-    type: "list",
-    message: "What would you like to do?",
-    choices: [
-        "View all departments.",
-        "View all roles.",
-        "View all employees.",
-        "Add a department.",
-        "Add a role.",
-        "Add employee.",
-        "Update employee role.",
-        "End session."
-    ]
-});
+
+// this function is the list that the user will interact with; uiPrompt
+async function uiPrompt() {
+    console.log('\n')
+    return inquirer.prompt({
+        name: "whatToDo",
+        type: "list",
+        message: "What would you like to do?",
+        choices: [
+            "View all departments.",
+            "View all roles.",
+            "View all employees.",
+            "View all employees by department.",
+            "Add a department.",
+            "Add a role.",
+            "Add employee.",
+            "Remove employee.",
+            "Update employee role.",
+            "End session."
+        ]
+    });
+};
+
+// add  new employee infor to db
+async function addEmployee() {
+    const managers = await obtainManagerNames();
+    const roles = await obtainRoles();
+    return inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "first_name",
+                message: "Enter first name of employee:",
+            },
+            
+            {
+                type: "input",
+                name: "last_name",
+                message: "Enter last name of employee:",
+            },
+            {
+                type: "list",
+                name: "Assign employee role:",
+                choices: [
+                    ...roles
+                ],
+            },
+            {
+                type: "list",
+                name: "Assign manger (if applicable)",
+                choices: [
+                    ...managers, "null"
+                ],
+            },
+
+        ])
+}
+
+
+
+
 
 // asynchronous to increase app performance & responsiveness
 
 async function primary() {
     let terminateCurcuit = false
-    while(!terminateCurcuit) {
+    while (!terminateCurcuit) {
         const prompt = await uiPrompt();
-        switch(prompt.action.toLowerCase()) {
-            
+        switch (prompt.action.toLowerCase()) {
+
         }
     }
 }
