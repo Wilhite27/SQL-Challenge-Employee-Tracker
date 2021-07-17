@@ -40,6 +40,32 @@ async function updateEmployeeRole(info) {
     console.log('updated ${employee[0] ${employee[1] with a new role: ${info.role}');
 }
 
+//add department
+async function acquireDepartmentInfo (departmentInfo) {
+    const departmentName = departmentInfo.departmentName;
+    const query = `INSERT into departments (name) VALUES (?)`;
+    const args = [departmentName];
+    const rows = await connection.query(query, args);
+    console.log('${departmentName} added as new department.')
+}
+
+// view all employees 
+async function acquireEmployeeRoster () {
+    const query = `SELECT * FROM employees`;
+    const rows = await connection.query(query);
+    let names = [];
+    for (const employee of rows) {
+        names.push('${employee.first_name} ${employee.last_name}');
+    }
+    return names;
+};
+
+// view all departments
+async function obtainAllDepartments () {
+    const query = `SELECT id AS 'ID', name AS 'Department' FROM departments`;
+    const rows = await connection.query(query);
+    console.table(rows);
+}
 
 inquirer
 .prompt({
