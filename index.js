@@ -240,7 +240,44 @@ async function primary() {
     while(!terminateCurcuit) {
         const prompt = await uiPrompt();
         switch(prompt.action.toLowerCase()) {
-            
+            // done
+            case "view all employees": {
+                await viewAllEmployees();
+                break;
+            }
+            // done
+            case "view all employees by department": {
+                await obtainEmployeesByDepartment();
+                break;
+            }
+            // done
+            case "view all details for employees": {
+                await viewAllEmployeeDetails();
+                break;
+            }
+            // done
+            case "view all departments": {
+                await obtainAllDepartments();
+                break;
+            }
+            // done
+            case "view all roles": {
+                await obtainAllRoles();
+                break;
+            }
+            // done
+            case "add employee": {
+                const  newHire = await addEmployee();
+                console.log(newHire);
+                await insertEmployee(newHire);
+                break;
+            }
+            case "remove employee": {
+                const eject = await acquireSlashHireInfo();
+                await slashHire(eject);
+                break;
+            }
+
         }
     }
 }
