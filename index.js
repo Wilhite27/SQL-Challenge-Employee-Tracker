@@ -313,7 +313,13 @@ async function primary() {
                 await slashHire(eject);
                 break;
             }
+            case "exit": {
+                terminateCurcuit = true;
+                console.log("Thank you for using employee tracker");
+                process.exit(0);
+            }
 
         }
     }
 }
+primary();

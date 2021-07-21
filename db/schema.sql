@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS roles;
 CREATE TABLE departments (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30),
-    description TEXT
 );
 
 CREATE TABLE roles (
@@ -26,3 +25,7 @@ CREATE TABLE employees (
     FOREIGN KEY (manager_id) REFERENCES roles(id),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP 
 );
+
+SELECT * FROM departments;
+SELECT * FROM roles;
+SELECT * FROM employees;
