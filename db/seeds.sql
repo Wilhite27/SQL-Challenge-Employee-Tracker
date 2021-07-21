@@ -14,4 +14,3 @@ INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Marg
 INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Bart", "Simpson", 4);
 INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Lisa", "Simpson", 3);
 
-
