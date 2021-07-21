@@ -227,7 +227,9 @@ async function uiPrompt() {
             "Update employee role.",
             "End session."
         ]
-    });
+    })
+    .then()
+    ;
 };
 
 // // add  new employee infor to db
